@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Productos</title>
+    <style>
+        .title {
+            text-align: center; 
+            margin: 20px 0; 
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 300px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 5px;
+            background: #fff; 
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Lista de Productos</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        {{#each products}}
+        <div class="card">
+            <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}">
+            <h3>{{this.title}}</h3>
+            <p><strong>Precio:</strong> ${{this.price}}</p>
+            <p><strong>Stock:</strong> {{this.stock}}</p>
+            <p><strong>Descripción:</strong> {{this.description}}</p>
+        </div>
+        {{/each}}
+    </div>
+</body>
+</html>

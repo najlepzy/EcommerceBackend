@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductService } from "../services/productService";
 import mongoose from "mongoose";
+import { io } from "../server";
 
 const productService = new ProductService();
 
@@ -46,6 +47,8 @@ export const getProductById = async (req: Request, res: Response) => {
 export const addProduct = async (req: Request, res: Response) => {
   try {
     const newProduct = await productService.addProduct(req.body);
+    const products = await productService.getAllProducts();
+    io.emit("updateProducts", products);
     res.status(201).json(newProduct);
   } catch (error) {
     console.error("Failed to add product:", error);
@@ -54,26 +57,29 @@ export const addProduct = async (req: Request, res: Response) => {
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
-  const updatedProduct = await productService.updateProduct(
-    req.params.pid,
-    req.body
-  );
-  if (updatedProduct) {
-    res.json(updatedProduct);
-  } else {
-    res.status(404).send("Product not found");
+  const id = req.params.pid;
+  try {
+    const updatedProduct = await productService.updateProduct(id, req.body);
+    if (updatedProduct) {
+      const products = await productService.getAllProducts();
+      io.emit("updateProducts", products);
+      res.json(updatedProduct);
+    } else {
+      res.status(404).send("Product not found");
+    }
+  } catch (error) {
+    console.error("Failed to update product:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
   const id = req.params.pid;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("Invalid ID format");
-  }
-
   try {
     const success = await productService.deleteProduct(id);
     if (success) {
+      const products = await productService.getAllProducts();
+      io.emit("updateProducts", products);
       res.status(200).send("Product successfully deleted");
     } else {
       res.status(404).send("Product not found");
