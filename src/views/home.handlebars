@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>{{title}}</title>
     <style>
         .title {
-            text-align: center; 
-            margin: 20px 0; 
+            text-align: center;
+            margin: 20px 0;
         }
         .card {
             border: 1px solid #ccc;
             border-radius: 8px;
             width: 300px;
             padding: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         .card img {
@@ -22,22 +23,289 @@
             height: 200px;
             object-fit: contain;
             border-radius: 5px;
-            background: #fff; 
+            background: #fff;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a.active {
+            background-color: #5A67D8;
+            color: #fff;
+            border-color: #5A67D8;
+        }
+        .pagination a.disabled {
+            pointer-events: none;
+            color: #ccc;
+            border-color: #ccc;
+        }
+        .pagination a:hover:not(.active):not(.disabled) {
+            background-color: #f0f0f0;
+        }
+        .add-to-cart {
+            font-size: 24px;
+            color: white;
+            background-color: #5A67D8;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .add-to-cart:hover {
+            background-color: #434190;
+            transform: scale(1.1);
+        }
+        .shopping-cart-container {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+        }
+        .cart-count {
+            background-color: #5A67D8;
+            color: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            border: 2px solid white;
+        }
+        .cart-icon {
+            font-size: 40px;
+            color: #5A67D8;
+            position: relative;
+        }
+        .cart-count::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background-color: #5A67D8;
+            border-radius: 50%;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <h1 class="title">Lista de Productos</h1>
-    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-        {{#each products}}
-        <div class="card">
+    <div class="shopping-cart-container">
+        <a href="/carts/{{cartId}}">
+            <i class="fa-solid fa-cart-shopping cart-icon"></i>
+            <span class="cart-count">0</span>
+        </a>
+    </div>
+    <h1 class="title">{{title}}</h1>
+
+    <div class="filter-container">
+        <label for="categoryFilter">Filtrar por categoría:</label>
+        <select id="categoryFilter">
+            <option value="all">All</option>
+            {{#each uniqueCategories}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="filter-container">
+        <label for="sortPrice">Ordenar por precio:</label>
+        <select id="sortPrice">
+            <option value="asc">Desc to Asc</option>
+            <option value="desc">Asc to Desc</option>
+        </select>
+    </div>
+
+    <div id="productList" class="cards-container">
+        {{#each payload}}
+        <div class="card" data-category="{{this.category}}" id="product-{{this._id}}">
             <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}">
             <h3>{{this.title}}</h3>
             <p><strong>Precio:</strong> ${{this.price}}</p>
             <p><strong>Stock:</strong> {{this.stock}}</p>
             <p><strong>Descripción:</strong> {{this.description}}</p>
+            <button class="add-to-cart" data-id="{{this._id}}">+</button>
         </div>
         {{/each}}
     </div>
+
+    <div class="pagination">
+        {{#if hasPrevPage}}
+        <a href="?page={{prevPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">&laquo; Back</a>
+        {{else}}
+        <a class="disabled">&laquo; Back</a>
+        {{/if}}
+
+        {{#each paginationPages}}
+        <a href="?page={{this}}&query={{query}}&limit={{limit}}&sort={{sort}}" class="{{#if (eq this ../page)}}active{{/if}}">{{this}}</a>
+        {{/each}}
+
+        {{#if hasNextPage}}
+        <a href="?page={{nextPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">Next &raquo;</a>
+        {{else}}
+        <a class="disabled">Next &raquo;</a>
+        {{/if}}
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const socket = io();
+
+        
+            function updateCartCount() {
+                fetch(`/api/carts/{{cartId}}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const productCount = data.products.reduce((total, product) => total + product.quantity, 0);
+                        document.querySelector('.cart-count').textContent = productCount;
+                    })
+                    .catch(error => console.error('Error fetching cart data:', error));
+            }
+
+       
+            socket.on('productAdded', function(product) {
+                addProductToList(product);
+            });
+
+            socket.on('productUpdated', function(product) {
+                updateProductInList(product);
+            });
+
+            socket.on('productDeleted', function(productId) {
+                removeProductFromList(productId);
+            });
+
+            function addProductToCart(productId) {
+                fetch(`/api/carts/{{cartId}}/product/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateCartCount();
+                    alert('Producto añadido al carrito!');
+                })
+                .catch(error => {
+                    console.error('Error adding product to cart:', error);
+                    alert('Error al añadir producto al carrito');
+                });
+            }
+
+            function addProductToList(product) {
+                const productList = document.getElementById('productList');
+                const productHTML = `
+                    <div class="card" data-category="${product.category}" id="product-${product._id}">
+                        <img src="${product.thumbnails[0]}" alt="${product.title}">
+                        <h3>${product.title}</h3>
+                        <p><strong>Precio:</strong> $${product.price}</p>
+                        <p><strong>Stock:</strong> ${product.stock}</p>
+                        <p><strong>Descripción:</strong> ${product.description}</p>
+                        <button class="add-to-cart" data-id="${product._id}">+</button>
+                    </div>`;
+                productList.innerHTML += productHTML;
+                attachAddToCartEvents(); 
+            }
+
+            function updateProductInList(product) {
+                const productElement = document.getElementById(`product-${product._id}`);
+                if (productElement) {
+                    productElement.innerHTML = `
+                        <img src="${product.thumbnails[0]}" alt="${product.title}">
+                        <h3>${product.title}</h3>
+                        <p><strong>Precio:</strong> $${product.price}</p>
+                        <p><strong>Stock:</strong> ${product.stock}</p>
+                        <p><strong>Descripción:</strong> ${product.description}</p>
+                        <button class="add-to-cart" data-id="${product._id}">+</button>`;
+                    attachAddToCartEvents(); 
+                }
+            }
+
+            function removeProductFromList(productId) {
+                const productElement = document.getElementById(`product-${productId}`);
+                if (productElement) {
+                    productElement.remove();
+                }
+            }
+
+            function attachAddToCartEvents() {
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const productId = this.dataset.id;
+                        addProductToCart(productId);
+                    });
+                });
+            }
+
+            attachAddToCartEvents(); 
+
+            document.getElementById('sortPrice').addEventListener('change', function() {
+                const selectedSort = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('sort', selectedSort);
+                window.location.search = urlParams.toString();
+            });
+
+            document.getElementById('categoryFilter').addEventListener('change', function() {
+                const selectedCategory = this.value;
+                const urlParams = new URLSearchParams(window.location.search);
+
+                if (selectedCategory === 'all') {
+                    urlParams.delete('query');
+                } else {
+                    urlParams.set('query', selectedCategory);
+                }
+
+                const selectedSort = urlParams.get('sort') || 'asc';
+                urlParams.set('sort', selectedSort);
+                window.location.search = urlParams.toString();
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedCategory = urlParams.get('query') || 'all';
+            const selectedSort = urlParams.get('sort') || 'asc';
+
+            document.getElementById('categoryFilter').value = selectedCategory;
+            document.getElementById('sortPrice').value = selectedSort;
+
+            updateCartCount();
+        });
+    </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 import Product, { Product as ProductType } from "../models/productModel";
 
 export class ProductService {
-  async getAllProducts(limit?: number): Promise<ProductType[]> {
-    return limit ? Product.find().limit(limit) : Product.find();
+  async getAllProducts(page: number = 1, limit: number = 10, query: any = {}, sort: any = {}): Promise<any> {
+    return Product.paginate(query, { page, limit, lean: true, sort });
   }
 
   async getProductById(id: string): Promise<ProductType | null> {
@@ -10,19 +10,14 @@ export class ProductService {
   }
 
   async addProduct(productData: Omit<ProductType, "id">): Promise<ProductType> {
-    const newProduct = new Product(productData);
-    return newProduct.save();
+    return new Product(productData).save();
   }
 
-  async updateProduct(
-    id: string,
-    updateData: Partial<Omit<ProductType, "id">>
-  ): Promise<ProductType | null> {
+  async updateProduct(id: string, updateData: Partial<Omit<ProductType, "id">>): Promise<ProductType | null> {
     return Product.findByIdAndUpdate(id, updateData, { new: true });
   }
 
   async deleteProduct(id: string): Promise<boolean> {
-    const result = await Product.findByIdAndDelete(id);
-    return result !== null;
+    return (await Product.findByIdAndDelete(id)) !== null;
   }
 }

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8;
+            padding: 20px 0;
+        }
+        .cart-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .cart-header,
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-header div {
+            font-weight: bold;
+            text-align: center;
+            width: 20%;
+        }
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 20%;
+        }
+        .product-details img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .product-details div {
+            text-align: center;
+        }
+        .product-price,
+        .product-quantity,
+        .product-total {
+            text-align: center;
+            width: 20%;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-controls button {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .quantity-controls input {
+            width: 40px;
+            text-align: center;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .remove-item {
+            color: #ff0000;
+            cursor: pointer;
+            font-size: 18px;
+            text-align: center;
+            width: 20%;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            padding: 10px 0;
+            text-align: right;
+        }
+        .total-label {
+            width: 80%;
+            text-align: right;
+        }
+        .total-amount {
+            width: 20%;
+            text-align: right;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h1>{{title}}</h1>
+        {{#if cart.products.length}}
+        <div class="cart-list">
+            <div class="cart-header">
+                <div class="product-details">Products</div>
+                <div class="product-price">Price</div>
+                <div class="product-quantity">Quantity</div>
+                <div class="product-total">Total</div>
+            </div>
+            {{#each cart.products}}
+            <div class="cart-item" data-price="{{this.product.price}}" data-quantity="{{this.quantity}}">
+                <div class="product-details">
+                    <img src="{{this.product.thumbnails}}" alt="{{this.product.title}}">
+                    <div>{{this.product.title}}</div>
+                </div>
+                <div class="product-price">$ {{this.product.price}}</div>
+                <div class="product-quantity">
+                    <div class="quantity-controls">
+                       {{this.quantity}}
+                    </div>
+                </div>
+                <div class="product-total">$</div>
+            </div>
+            {{/each}}
+        </div>
+        <div class="total-row">
+            <div class="total-label">Total:</div>
+            <div class="total-amount">$</div>
+        </div>
+        {{else}}
+        <div class="empty-cart">
+            Your cart is empty
+        </div>
+        {{/if}}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let totalAmount = 0;
+            const cartItems = document.querySelectorAll('.cart-item');
+            cartItems.forEach(item => {
+                const price = parseFloat(item.getAttribute('data-price'));
+                const quantity = parseInt(item.getAttribute('data-quantity'));
+                const total = price * quantity;
+                item.querySelector('.product-total').textContent = `$ ${total.toLocaleString()}`;
+                totalAmount += total;
+            });
+            document.querySelector('.total-amount').textContent = `$ ${totalAmount.toLocaleString()}`;
+        });
+    </script>
+</body>
+</html>

@@ -14,7 +14,7 @@
             border-radius: 8px;
             width: 300px;
             padding: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
         .card img {
@@ -30,13 +30,64 @@
             gap: 20px;
             justify-content: center;
         }
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a.active {
+            background-color: #5A67D8;
+            color: #fff;
+            border-color: #5A67D8;
+        }
+        .pagination a.disabled {
+            pointer-events: none;
+            color: #ccc;
+            border-color: #ccc;
+        }
+        .pagination a:hover:not(.active):not(.disabled) {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
     <h1 class="title">Productos en Tiempo Real</h1>
+
+    <div class="filter-container">
+        <label for="categoryFilter">Filtrar por categoría:</label>
+        <select id="categoryFilter">
+            <option value="all">All</option>
+            {{#each uniqueCategories}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+    <div class="filter-container">
+        <label for="sortPrice">Ordenar por precio:</label>
+        <select id="sortPrice">
+            <option value="asc">Menor a Mayor</option>
+            <option value="desc">Mayor a Menor</option>
+        </select>
+    </div>
+
     <div id="productList" class="cards-container">
-        {{#each products}}
-        <div class="card">
+        {{#each payload}}
+        <div class="card" data-category="{{this.category}}" id="product-{{this._id}}">
             <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}">
             <h3>{{this.title}}</h3>
             <p><strong>Precio:</strong> ${{this.price}}</p>
@@ -46,24 +97,102 @@
         {{/each}}
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
-  socket.on('updateProducts', function(products) {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = '';  
-    products.forEach(product => {
-      const productHTML = `<div class="card">
-        <img src="${product.thumbnails[0]}" alt="${product.title}">
-        <h3>${product.title}</h3>
-        <p><strong>Precio:</strong> $${product.price}</p>
-        <p><strong>Stock:</strong> ${product.stock}</p>
-        <p><strong>Descripción:</strong> ${product.description}</p>
-      </div>`;
-      productList.innerHTML += productHTML; 
-    });
-  });
-</script>
+    <div class="pagination">
+        {{#if hasPrevPage}}
+        <a href="?page={{prevPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">&laquo; Anterior</a>
+        {{else}}
+        <a class="disabled">&laquo; Anterior</a>
+        {{/if}}
 
+        {{#each paginationPages}}
+        <a href="?page={{this}}&query={{query}}&limit={{limit}}&sort={{sort}}" class="{{#if (eq this ../page)}}active{{/if}}">{{this}}</a>
+        {{/each}}
+
+        {{#if hasNextPage}}
+        <a href="?page={{nextPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">Siguiente &raquo;</a>
+        {{else}}
+        <a class="disabled">Siguiente &raquo;</a>
+        {{/if}}
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('productAdded', function(product) {
+            addProductToList(product);
+        });
+
+        socket.on('productUpdated', function(product) {
+            updateProductInList(product);
+        });
+
+        socket.on('productDeleted', function(productId) {
+            removeProductFromList(productId);
+        });
+
+        function addProductToList(product) {
+            const productList = document.getElementById('productList');
+            const productHTML = `
+                <div class="card" data-category="${product.category}" id="product-${product._id}">
+                    <img src="${product.thumbnails[0]}" alt="${product.title}">
+                    <h3>${product.title}</h3>
+                    <p><strong>Precio:</strong> $${product.price}</p>
+                    <p><strong>Stock:</strong> ${product.stock}</p>
+                    <p><strong>Descripción:</strong> ${product.description}</p>
+                </div>`;
+            productList.innerHTML += productHTML;
+        }
+
+        function updateProductInList(product) {
+            const productElement = document.getElementById(`product-${product._id}`);
+            if (productElement) {
+                productElement.innerHTML = `
+                    <img src="${product.thumbnails[0]}" alt="${product.title}">
+                    <h3>${product.title}</h3>
+                    <p><strong>Precio:</strong> $${product.price}</p>
+                    <p><strong>Stock:</strong> ${product.stock}</p>
+                    <p><strong>Descripción:</strong> ${product.description}</p>`;
+            }
+        }
+
+        function removeProductFromList(productId) {
+            const productElement = document.getElementById(`product-${productId}`);
+            if (productElement) {
+                productElement.remove();
+            }
+        }
+
+        document.getElementById('sortPrice').addEventListener('change', function() {
+            const selectedSort = this.value;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sort', selectedSort);
+            window.location.search = urlParams.toString();
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const selectedCategory = this.value;
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (selectedCategory === 'all') {
+                urlParams.delete('query');
+            } else {
+                urlParams.set('query', selectedCategory);
+            }
+
+            const selectedSort = urlParams.get('sort') || 'asc';
+            urlParams.set('sort', selectedSort);
+            window.location.search = urlParams.toString();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedCategory = urlParams.get('query') || 'all';
+            const selectedSort = urlParams.get('sort') || 'asc';
+
+            document.getElementById('categoryFilter').value = selectedCategory;
+            document.getElementById('sortPrice').value = selectedSort;
+        });
+    </script>
 </body>
 </html>
