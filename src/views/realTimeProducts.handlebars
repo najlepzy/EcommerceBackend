@@ -65,10 +65,10 @@
     </style>
 </head>
 <body>
-    <h1 class="title">Productos en Tiempo Real</h1>
+    <h1 class="title">Realtime Products</h1>
 
     <div class="filter-container">
-        <label for="categoryFilter">Filtrar por categoría:</label>
+        <label for="categoryFilter">Category:</label>
         <select id="categoryFilter">
             <option value="all">All</option>
             {{#each uniqueCategories}}
@@ -78,10 +78,10 @@
     </div>
 
     <div class="filter-container">
-        <label for="sortPrice">Ordenar por precio:</label>
+        <label for="sortPrice">Sort by Price:</label>
         <select id="sortPrice">
-            <option value="asc">Menor a Mayor</option>
-            <option value="desc">Mayor a Menor</option>
+            <option value="asc">Desc to Asc</option>
+            <option value="desc">Asc to Desc</option>
         </select>
     </div>
 
@@ -90,9 +90,9 @@
         <div class="card" data-category="{{this.category}}" id="product-{{this._id}}">
             <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}">
             <h3>{{this.title}}</h3>
-            <p><strong>Precio:</strong> ${{this.price}}</p>
+            <p><strong>Price:</strong> ${{this.price}}</p>
             <p><strong>Stock:</strong> {{this.stock}}</p>
-            <p><strong>Descripción:</strong> {{this.description}}</p>
+            <p><strong>Description:</strong> {{this.description}}</p>
         </div>
         {{/each}}
     </div>
