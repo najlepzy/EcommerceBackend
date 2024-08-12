@@ -1,6 +1,6 @@
 # Ecommerce
 
-Este es un proyecto realizado en Node.js con servidor en Express utilizando plantillas de Handlebars para visualizar el contenido del lado del cliente
+Este es un proyecto realizado en Node.js con servidor en Express utilizando plantillas de Handlebars para visualizar el contenido del lado del cliente y MongoDB como base de datos.
 
 ## Requisitos
 
