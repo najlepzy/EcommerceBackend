@@ -99,9 +99,9 @@
 
     <div class="pagination">
         {{#if hasPrevPage}}
-        <a href="?page={{prevPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">&laquo; Anterior</a>
+        <a href="?page={{prevPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">&laquo; Back</a>
         {{else}}
-        <a class="disabled">&laquo; Anterior</a>
+        <a class="disabled">&laquo; Back</a>
         {{/if}}
 
         {{#each paginationPages}}
@@ -109,9 +109,9 @@
         {{/each}}
 
         {{#if hasNextPage}}
-        <a href="?page={{nextPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">Siguiente &raquo;</a>
+        <a href="?page={{nextPage}}&query={{query}}&limit={{limit}}&sort={{sort}}">Next &raquo;</a>
         {{else}}
-        <a class="disabled">Siguiente &raquo;</a>
+        <a class="disabled">Next &raquo;</a>
         {{/if}}
     </div>
 
