@@ -12,12 +12,10 @@ export const createCart = async (req: Request, res: Response) => {
 export const getCartById = async (req: Request, res: Response) => {
   const id = req.params.cid;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("Invalid cart ID");
-  }
-
-  const cart = await cartService.getCartById(id);
-  return cart ? res.json(cart) : res.status(404).send("Cart not found");
+  return !mongoose.Types.ObjectId.isValid(id)
+    ? res.status(400).send("Invalid cart ID")
+    : res.json(await cartService.getCartById(id)) ||
+        res.status(404).send("Cart not found");
 };
 
 export const addProductToCart = async (req: Request, res: Response) => {
@@ -34,42 +32,37 @@ export const updateCart = async (req: Request, res: Response) => {
   const cartId = req.params.cid;
   const products = req.body.products;
 
-  if (!Array.isArray(products)) {
-    return res
-      .status(400)
-      .send("Invalid products format, expected an array of products.");
-  }
-
-  try {
-    const updatedCart = await cartService.replaceCartProducts(cartId, products);
-    res.json(updatedCart);
-  } catch (error) {
-    if (error instanceof Error) {
-      res
-        .status(500)
-        .send(error.message || "An internal server error occurred.");
-    } else {
-      res.status(500).send("An unexpected error occurred.");
-    }
-  }
+  return !Array.isArray(products)
+    ? res
+        .status(400)
+        .send("Invalid products format, expected an array of products.")
+    : await cartService
+        .replaceCartProducts(cartId, products)
+        .then((updatedCart) => res.json(updatedCart))
+        .catch((error) =>
+          res
+            .status(
+              error instanceof Error &&
+                error.message === "There are no products to delete in this cart"
+                ? 400
+                : 500
+            )
+            .send(
+              error instanceof Error
+                ? error.message || "An internal server error occurred."
+                : "An unexpected error occurred."
+            )
+        );
 };
 
 export const updateProductInCart = async (req: Request, res: Response) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
 
-  if (!quantity || quantity < 1) {
-    return res.status(400).send("Invalid quantity");
-  }
-
-  const updatedCart = await cartService.updateProductQuantity(
-    cid,
-    pid,
-    quantity
-  );
-  return updatedCart
-    ? res.json(updatedCart)
-    : res.status(404).send("Product not found in cart");
+  return !quantity || quantity < 1
+    ? res.status(400).send("Invalid quantity")
+    : res.json(await cartService.updateProductQuantity(cid, pid, quantity)) ||
+        res.status(404).send("Product not found in cart");
 };
 
 export const deleteProductFromCart = async (req: Request, res: Response) => {
@@ -78,11 +71,13 @@ export const deleteProductFromCart = async (req: Request, res: Response) => {
 
   try {
     const cart = await cartService.deleteProductFromCart(cartId, productId);
-    cart ? res.json(cart) : res.status(404).send("Product not found in cart");
+    return cart
+      ? res.json(cart)
+      : res.status(404).send("Product not found in cart");
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "An unexpected error occurred";
-    res
+    return res
       .status(
         error instanceof Error &&
           message === "There are no products to delete in this cart"
@@ -99,7 +94,7 @@ export const deleteAllProductsFromCart = async (
 ) => {
   const cartId = req.params.cid;
   const cart = await cartService.removeAllProducts(cartId);
-  cart
+  return cart
     ? res
         .status(200)
         .json({ message: "All products were removed from the cart", cart })

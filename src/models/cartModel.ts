@@ -1,13 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface CartProduct {
-  product: mongoose.Types.ObjectId;
-  quantity: number;
-}
-
-export interface Cart extends Document {
-  products: CartProduct[];
-}
+import mongoose, { Schema } from "mongoose";
+import { Cart } from "../interfaces/cartInterfaces";
 
 const cartSchema: Schema = new Schema(
   {
