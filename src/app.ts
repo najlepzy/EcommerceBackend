@@ -3,9 +3,9 @@ import { engine } from "express-handlebars";
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
 import Handlebars from "handlebars";
 import passport from "./config/passport";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
 import path from "path";
-
+import { errorHandler } from "./middleware/errorHandler";
 import viewRoutes from "./routes/viewRoutes";
 import productRoutes from "./routes/productRoutes";
 import authRoutes from "./routes/authRoutes";
@@ -29,5 +29,7 @@ app.use("/", viewRoutes);
 app.use("/api", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/carts", cartRoutes);
+
+app.use(errorHandler);
 
 export default app;

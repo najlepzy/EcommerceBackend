@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Cart } from "../interfaces/cartInterfaces";
 import CartModel from "../models/cartModel";
+import { messages } from "../utils/messages";
 
 export class CartService {
   async createCart(): Promise<Cart> {
@@ -58,7 +59,7 @@ export class CartService {
     products: Array<{ productId: string; quantity: number }>
   ): Promise<Cart | null> {
     const cart = await CartModel.findById(cartId);
-    if (!cart) throw new Error("Cart not found");
+    if (!cart) throw new Error(messages.cartNotFound);
 
     cart.products = products.map((product) => ({
       product: new mongoose.Types.ObjectId(product.productId),

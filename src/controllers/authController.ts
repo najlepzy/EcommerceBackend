@@ -1,34 +1,52 @@
 import { Request, Response } from "express";
 import * as userService from "../services/authService";
 import User from "../models/userModel";
+import { HttpStatusCodes, messages } from "../utils/messages";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const message = await userService.registerUser(req.body);
-    res.status(201).send(message);
+    res.status(HttpStatusCodes.CREATED).send(message);
   } catch (error: unknown) {
     res
-      .status(error instanceof Error ? 400 : 500)
+      .status(
+        error instanceof Error
+          ? HttpStatusCodes.BAD_REQUEST
+          : HttpStatusCodes.INTERNAL_SERVER_ERROR
+      )
+      .send(error instanceof Error ? error.message : messages.unknownError);
+  }
+};
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  try {
+    const user = await userService.loginUser(email, password);
+    const token = userService.generateToken(user);
+    res.cookie("jwt", token, { httpOnly: true, secure: false });
+    res.json({ message: messages.loginSuccess });
+  } catch (error: unknown) {
+    res
+      .status(HttpStatusCodes.UNAUTHORIZED)
       .send(
-        error instanceof Error ? error.message : "An unknown error occurred"
+        error instanceof Error ? error.message : messages.authenticationFailed
       );
   }
 };
 
-export const loginUser = (req: Request, res: Response) => {
-  const user = req.user as InstanceType<typeof User> | undefined;
-  return !user
-    ? res.status(401).send("Authentication failed")
-    : (res.cookie("jwt", userService.generateToken(user), {
-        httpOnly: true,
-        secure: false,
-      }),
-      res.json({ message: "Logged in successfully" }));
-};
-
 export const getCurrentUser = async (req: Request, res: Response) => {
-  const user = req.user as InstanceType<typeof User>;
-  return !user
-    ? res.status(401).send("No user authenticated")
-    : res.json(userService.getUserData(user));
+  try {
+    const user = req.user as InstanceType<typeof User>;
+    if (!user) {
+      return res
+        .status(HttpStatusCodes.UNAUTHORIZED)
+        .send(messages.noUserAuthenticated);
+    }
+    const userData = userService.getUserData(user);
+    res.json(userData);
+  } catch (error) {
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.userDataFetchError);
+  }
 };

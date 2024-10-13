@@ -1,8 +1,9 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { Request } from "express";
 import User from "../models/userModel";
+import { env } from "../config/dotenv";
+import { messages } from "../utils/messages";
 
 passport.use(
   new LocalStrategy(
@@ -15,13 +16,13 @@ passport.use(
         const user = await User.findOne({ email });
         if (!user) {
           return done(null, false, {
-            message: "No user found with that email address.",
+            message: messages.noUserWithEmail,
           });
         }
 
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-          return done(null, false, { message: "Invalid password." });
+          return done(null, false, { message: messages.invalidPassword });
         }
 
         return done(null, user);
@@ -32,14 +33,6 @@ passport.use(
   )
 );
 
-const cookieExtractor = (req: Request): string | null => {
-  let token = null;
-  if (req && req.cookies) {
-    token = req.cookies["jwt"];
-  }
-  return token;
-};
-
 passport.use(
   new JwtStrategy(
     {
@@ -47,9 +40,12 @@ passport.use(
         (req) => req?.cookies?.jwt,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      secretOrKey: "YOUR_SECRET_KEY",
+      secretOrKey: env.JWT_SECRET as string,
     },
-    async (jwt_payload, done) => {
+    async (
+      jwt_payload: any,
+      done: (error: any, user?: any, info?: any) => void
+    ) => {
       try {
         const user = await User.findById(jwt_payload.id);
         if (user) {

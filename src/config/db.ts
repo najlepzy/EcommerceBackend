@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
+import { env } from "./dotenv";
+import { messages } from "../utils/messages";
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(
-      "mongodb+srv://Lauta:46282657laL@db.bxpqq.mongodb.net/"
-    );
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    const conn = await mongoose.connect(env.MONGO_URI as string);
+    console.log(messages.dbConnectionSuccess(conn.connection.host));
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`);
     } else {
-      console.error(`An unexpected error occurred`);
+      console.error(messages.dbConnectionError);
     }
     process.exit(1);
   }

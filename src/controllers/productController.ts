@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductService } from "../services/productService";
 import mongoose from "mongoose";
+import { messages, HttpStatusCodes } from "../utils/messages";
 import { io } from "../server";
 
 const productService = new ProductService();
@@ -22,7 +23,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
       sortOption
     );
     res.json({
-      status: "success",
+      status: messages.success,
       ...result,
       prevLink: result.hasPrevPage
         ? `${req.protocol}://${req.get("host")}${req.path}?page=${
@@ -36,26 +37,31 @@ export const getAllProducts = async (req: Request, res: Response) => {
         : null,
     });
   } catch (error) {
-    console.error("Failed to fetch products with pagination:", error);
-    res.status(500).send({
-      status: "error",
-      payload: "Failed to fetch products due to an unexpected error.",
-    });
+    console.error(messages.fetchProductsFail, error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.fetchProductsFail);
   }
 };
 
 export const getProductById = async (req: Request, res: Response) => {
   const id = req.params.pid;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send("Invalid ID format");
+    return res
+      .status(HttpStatusCodes.BAD_REQUEST)
+      .send(messages.invalidIDFormat);
   }
 
   try {
     const product = await productService.getProductById(id);
-    product ? res.json(product) : res.status(404).send("Product not found");
+    product
+      ? res.json(product)
+      : res.status(HttpStatusCodes.NOT_FOUND).send(messages.productNotFound);
   } catch (error) {
-    console.error("Failed to fetch product:", error);
-    res.status(500).send("Internal Server Error");
+    console.error(messages.fetchProductsFail, error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
   }
 };
 
@@ -63,10 +69,12 @@ export const addProduct = async (req: Request, res: Response) => {
   try {
     const newProduct = await productService.addProduct(req.body);
     io.emit("productAdded", newProduct);
-    res.status(201).json(newProduct);
+    res.status(HttpStatusCodes.CREATED).json(newProduct);
   } catch (error) {
-    console.error("Failed to add product:", error);
-    res.status(500).send("Failed to add product");
+    console.error(messages.productAddFail, error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.productAddFail);
   }
 };
 
@@ -74,12 +82,17 @@ export const updateProduct = async (req: Request, res: Response) => {
   const id = req.params.pid;
   try {
     const updatedProduct = await productService.updateProduct(id, req.body);
-    updatedProduct
-      ? (io.emit("productUpdated", updatedProduct), res.json(updatedProduct))
-      : res.status(404).send("Product not found");
+    if (updatedProduct) {
+      io.emit("productUpdated", updatedProduct);
+      res.json(updatedProduct);
+    } else {
+      res.status(HttpStatusCodes.NOT_FOUND).send(messages.productNotFound);
+    }
   } catch (error) {
-    console.error("Failed to update product:", error);
-    res.status(500).send("Internal Server Error");
+    console.error(messages.productUpdateFail, error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
   }
 };
 
@@ -87,12 +100,16 @@ export const deleteProduct = async (req: Request, res: Response) => {
   const id = req.params.pid;
   try {
     const success = await productService.deleteProduct(id);
-    success
-      ? (io.emit("productDeleted", id),
-        res.status(200).send("Product successfully deleted"))
-      : res.status(404).send("Product not found");
+    if (success) {
+      io.emit("productDeleted", id);
+      res.status(HttpStatusCodes.OK).send(messages.productDeleteSuccess);
+    } else {
+      res.status(HttpStatusCodes.NOT_FOUND).send(messages.productNotFound);
+    }
   } catch (error) {
-    console.error("Failed to delete product:", error);
-    res.status(500).send("Internal Server Error");
+    console.error(messages.productDeleteFail, error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
   }
 };
