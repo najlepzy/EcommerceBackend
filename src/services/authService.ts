@@ -29,7 +29,9 @@ export const registerUser = async (userData: UserDto) => {
 };
 
 export const generateToken = (user: any) => {
-  if (!env.JWT_SECRET) throw new Error(messages.jwtSecretMissing);
+  if (!env.JWT_SECRET) {
+    throw new HttpError(HttpStatusCodes.BAD_REQUEST, messages.jwtSecretMissing);
+  }
   const token = jwt.sign({ id: user._id }, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRATION,
   });
@@ -39,7 +41,10 @@ export const generateToken = (user: any) => {
 export const loginUser = async (email: string, password: string) => {
   const user = await userRepository.findUserByEmail(email);
   if (!user || !(await user.comparePassword(password))) {
-    throw new Error(messages.invalidEmailOrPassword);
+    throw new HttpError(
+      HttpStatusCodes.UNAUTHORIZED,
+      messages.invalidEmailOrPassword
+    );
   }
   return user;
 };
