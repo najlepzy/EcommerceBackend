@@ -30,6 +30,7 @@ export const messages = {
   userDataFetchError: "An error occurred while fetching user data",
   allProductsRemoved: "All products were removed from the cart",
   success: "Operation successful",
+  accessDenied: "Access denied",
 };
 
 export const HttpStatusCodes = {
@@ -37,6 +38,7 @@ export const HttpStatusCodes = {
   CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,

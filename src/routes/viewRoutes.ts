@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { ProductService } from "../services/productService";
-import { CartService } from "../services/cartService";
+import { ProductService } from "@services/productService";
+import { CartService } from "@services/cartService";
 
 const router = Router();
 const productService = new ProductService();
-const cartService = new CartService(); 
+const cartService = new CartService();
 
 router.get("/", async (req, res) => {
   const { page = 1, limit = 10, sort = "asc", query } = req.query;
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
   const sortOption =
     sort === "desc" ? { price: -1 } : sort === "asc" ? { price: 1 } : {};
 
-  const cartId = "66b9181fe1381cdc571ee93e";
+  const cartId = "671423cb2440bded58086df2";
 
   const allProducts = await productService.getAllProducts(1, 10000, {}, {});
   const uniqueCategories = [
@@ -57,7 +57,6 @@ router.get("/", async (req, res) => {
     res.status(500).send("Error loading products.");
   }
 });
-
 
 router.get("/realtimeproducts", async (req, res) => {
   const { page = 1, limit = 10, sort = "asc", query } = req.query;
@@ -108,7 +107,7 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 router.get("/carts/66b9181fe1381cdc571ee93e", async (req, res) => {
-  const cartId = "66b9181fe1381cdc571ee93e"; 
+  const cartId = "66b9181fe1381cdc571ee93e";
 
   try {
     const cart = await cartService.getCartById(cartId);

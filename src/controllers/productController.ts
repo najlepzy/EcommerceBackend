@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { ProductService } from "../services/productService";
 import mongoose from "mongoose";
-import { messages, HttpStatusCodes } from "../utils/messages";
-import { io } from "../server";
+import { ProductService } from "@services/productService";
+import { messages, HttpStatusCodes } from "@utils/messages";
+import { io } from "server";
 
 const productService = new ProductService();
 

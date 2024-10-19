@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { CartService } from "../services/cartService";
 import mongoose from "mongoose";
-import { messages, HttpStatusCodes } from '../utils/messages';
+import { CartService } from "@services/cartService";
+import { messages, HttpStatusCodes } from '@utils/messages';
 
 const cartService = new CartService();
 

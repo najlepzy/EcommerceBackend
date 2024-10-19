@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpStatusCodes, messages } from "../utils/messages";
+import { HttpStatusCodes, messages } from "@utils/messages";
 
 export function errorHandler(
   err: any,

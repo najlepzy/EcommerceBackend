@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { Product, ProductModel } from "../interfaces/productInterfaces";
+import { Product, ProductModel } from "@interfaces/productInterfaces";
 
 const productSchema: Schema<Product> = new Schema(
   {

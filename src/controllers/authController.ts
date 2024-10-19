@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import * as userService from "../services/authService";
-import User from "../models/userModel";
-import { HttpStatusCodes, messages } from "../utils/messages";
+import User from "@models/userModel";
+import * as userService from "@services/authService";
+import { HttpStatusCodes, messages } from "@utils/messages";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {

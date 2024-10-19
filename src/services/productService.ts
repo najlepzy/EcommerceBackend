@@ -1,79 +1,39 @@
-import Product from "../models/productModel";
-import { Product as ProductType } from "../interfaces/productInterfaces";
-import { messages } from "../utils/messages";
+import { ProductDTO } from "@dto/productDto";
+import { Product as ProductType } from "@interfaces/productInterfaces";
+import { ProductRepository } from "@repositories/productRepository";
 
 export class ProductService {
+  private productRepository: ProductRepository;
+
+  constructor() {
+    this.productRepository = new ProductRepository();
+  }
+
   async getAllProducts(
     page: number = 1,
     limit: number = 10,
     query: any = {},
     sort: any = {}
   ): Promise<any> {
-    try {
-      return Product.paginate(query, { page, limit, lean: true, sort });
-    } catch (error: unknown) {
-      console.error(messages.fetchProductsFail);
-      throw new Error(messages.fetchProductsFail);
-    }
+    return this.productRepository.getAllProducts(page, limit, query, sort);
   }
 
   async getProductById(id: string): Promise<ProductType | null> {
-    try {
-      const product = await Product.findById(id);
-      if (!product) {
-        throw new Error(messages.productNotFound);
-      }
-      return product;
-    } catch (error: unknown) {
-      console.error(handleError(error));
-      throw new Error(messages.productNotFound);
-    }
+    return this.productRepository.getProductById(id);
   }
 
-  async addProduct(productData: Omit<ProductType, "id">): Promise<ProductType> {
-    try {
-      return new Product(productData).save();
-    } catch (error: unknown) {
-      console.error(handleError(error));
-      throw new Error(messages.productAddFail);
-    }
+  async addProduct(productData: ProductDTO): Promise<ProductType> {
+    return this.productRepository.addProduct(productData);
   }
 
   async updateProduct(
     id: string,
-    updateData: Partial<Omit<ProductType, "id">>
+    updateData: Partial<ProductDTO>
   ): Promise<ProductType | null> {
-    try {
-      const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
-        new: true,
-      });
-      if (!updatedProduct) {
-        throw new Error(messages.productNotFound);
-      }
-      return updatedProduct;
-    } catch (error: unknown) {
-      console.error(handleError(error));
-      throw new Error(messages.productUpdateFail);
-    }
+    return this.productRepository.updateProduct(id, updateData);
   }
 
   async deleteProduct(id: string): Promise<boolean> {
-    try {
-      const result = await Product.findByIdAndDelete(id);
-      if (!result) {
-        throw new Error(messages.productDeleteFail);
-      }
-      return true;
-    } catch (error: unknown) {
-      console.error(handleError(error));
-      throw new Error(messages.productDeleteFail);
-    }
+    return this.productRepository.deleteProduct(id);
   }
-}
-
-function handleError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return messages.unknownError;
 }

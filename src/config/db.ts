@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { env } from "./dotenv";
-import { messages } from "../utils/messages";
+import { messages } from "@utils/messages";
 
 const connectDB = async () => {
   try {

@@ -1,9 +1,9 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import User from "../models/userModel";
-import { env } from "../config/dotenv";
-import { messages } from "../utils/messages";
+import { env } from "@config/dotenv";
+import User from "@models/userModel";
+import { messages } from "@utils/messages";
 
 passport.use(
   new LocalStrategy(

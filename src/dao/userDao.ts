@@ -1,5 +1,5 @@
-import User from "../models/userModel";
-import { UserDto } from "../dto/userDto";
+import User from "@models/userModel";
+import { UserDto } from "@dto/userDto";
 
 class UserDao {
   async createUser(userData: UserDto): Promise<InstanceType<typeof User>> {

@@ -1,7 +1,7 @@
-import User from "../models/userModel";
-import { userDao } from "../dao/userDao";
-import { UserDto } from "../dto/userDto";
-import { messages } from "../utils/messages";
+import User from "@models/userModel";
+import { userDao } from "@dao/userDao";
+import { UserDto } from "@dto/userDto";
+import { messages } from "@utils/messages";
 
 class UserRepository {
   async registerUser(userData: UserDto): Promise<InstanceType<typeof User>> {
