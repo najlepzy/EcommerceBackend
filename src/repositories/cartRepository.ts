@@ -1,11 +1,19 @@
-import { CartDAO } from "@dao/cartDao";
+import { CartDAO, ProductDAO } from "@dao/index";
 import { CartDTO } from "@dto/cartDto";
+import { TicketService } from "@services/ticketService";
+import { Helper } from "@utils/cartHelper";
+
+import { messages } from "@utils/messages";
 
 export class CartRepository {
   private cartDAO: CartDAO;
+  private productDAO: ProductDAO;
+  private ticketService: TicketService;
 
   constructor() {
     this.cartDAO = new CartDAO();
+    this.productDAO = new ProductDAO();
+    this.ticketService = new TicketService();
   }
 
   async createCart(): Promise<CartDTO> {
@@ -58,5 +66,41 @@ export class CartRepository {
   async removeAllProducts(cartId: string): Promise<CartDTO | null> {
     const cart = await this.cartDAO.removeAllProducts(cartId);
     return cart ? new CartDTO(cart) : null;
+  }
+
+  async purchaseCart(cartId: string, purchaserEmail: string) {
+    const cart = await this.cartDAO.getCartById(cartId);
+    if (!cart) {
+      return { success: false, message: messages.cartNotFound };
+    }
+
+    const { updatedProducts, failedProducts, totalAmount } =
+      await Helper.updateProductStock(cart.products, this.productDAO);
+
+    if (updatedProducts.length > 0) {
+      const ticketData = {
+        code: `TICKET-${Date.now()}`,
+        purchase_datetime: new Date(),
+        amount: totalAmount,
+        purchaser: purchaserEmail,
+      };
+
+      await this.ticketService.createTicket(ticketData);
+    }
+
+    cart.products = cart.products.filter((item) =>
+      failedProducts.includes(item.product.toString())
+    );
+    await cart.save();
+
+    return {
+      success: true,
+      message: messages.purchaseCompleted,
+      cart: new CartDTO({
+        ...cart.toObject(),
+        products: updatedProducts,
+      }),
+      failedProducts,
+    };
   }
 }

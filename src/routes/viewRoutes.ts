@@ -1,6 +1,5 @@
+import { CartService, ProductService } from "@services/index";
 import { Router } from "express";
-import { ProductService } from "@services/productService";
-import { CartService } from "@services/cartService";
 
 const router = Router();
 const productService = new ProductService();
@@ -14,7 +13,7 @@ router.get("/", async (req, res) => {
   const sortOption =
     sort === "desc" ? { price: -1 } : sort === "asc" ? { price: 1 } : {};
 
-  const cartId = "671423cb2440bded58086df2";
+  const cartId = "6715f2abb48dd27fed309d99";
 
   const allProducts = await productService.getAllProducts(1, 10000, {}, {});
   const uniqueCategories = [

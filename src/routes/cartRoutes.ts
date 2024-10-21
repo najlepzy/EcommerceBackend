@@ -22,6 +22,14 @@ router.post(
   authorizeRoles("user"),
   cartController.addProductToCart
 );
+
+router.post(
+  "/:cid/purchase",
+  passport.authenticate("jwt", { session: false }),
+  authorizeRoles("user"),
+  cartController.purchaseCart
+);
+
 router.put(
   "/:cid",
   passport.authenticate("jwt", { session: false }),
@@ -39,6 +47,12 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   authorizeRoles("user"),
   cartController.deleteProductFromCart
+);
+router.delete(
+  "/:cid",
+  passport.authenticate("jwt", { session: false }),
+  authorizeRoles("user"),
+  cartController.deleteAllProductsFromCart
 );
 
 export default router;

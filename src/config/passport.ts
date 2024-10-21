@@ -21,11 +21,9 @@ passport.use(
         }
 
         const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-          return done(null, false, { message: messages.invalidPassword });
-        }
-
-        return done(null, user);
+        return isMatch
+          ? done(null, user)
+          : done(null, false, { message: messages.invalidPassword });
       } catch (error) {
         return done(error);
       }
@@ -48,11 +46,7 @@ passport.use(
     ) => {
       try {
         const user = await User.findById(jwt_payload.id);
-        if (user) {
-          return done(null, user);
-        } else {
-          return done(null, false);
-        }
+        return user ? done(null, user) : done(null, false);
       } catch (error) {
         return done(error, false);
       }

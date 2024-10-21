@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { env } from "../config/dotenv";
-import { userRepository } from "../repositories/userRepository";
-import { UserDto } from "../dto/userDto";
+import { env } from "@config/dotenv";
+import { UserDto } from "@dto/userDto";
+import { userRepository } from "@repositories/userRepository";
 import { HttpStatusCodes, messages } from "@utils/messages";
 
 class HttpError extends Error {

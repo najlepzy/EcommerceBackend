@@ -5,12 +5,13 @@ import Handlebars from "handlebars";
 import path from "path";
 import cookieParser from "cookie-parser";
 import passport from "@config/passport";
-import { errorHandler } from "@middleware/errorHandler";
-import viewRoutes from "@routes/viewRoutes";
-import productRoutes from "@routes/productRoutes";
-import authRoutes from "@routes/authRoutes";
-import cartRoutes from "@routes/cartRoutes";
-import { authorizeRoles } from "@middleware/authorization";
+import {
+  authRoutes,
+  cartRoutes,
+  productRoutes,
+  viewRoutes,
+} from "@routes/index";
+import { authorizeRoles, errorHandler } from "@middleware/index";
 
 const app = express();
 

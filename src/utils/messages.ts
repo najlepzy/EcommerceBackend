@@ -31,6 +31,8 @@ export const messages = {
   allProductsRemoved: "All products were removed from the cart",
   success: "Operation successful",
   accessDenied: "Access denied",
+  purchaseCompleted: "Compra completada con éxito",
+  purchaseError: "Ocurrió un error al completar la compra",
 };
 
 export const HttpStatusCodes = {

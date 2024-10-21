@@ -1,8 +1,8 @@
-import app from "./app";
-import connectDB from "./config/db";
 import http from "http";
+import app from "./app";
+import { env } from "@config/dotenv";
+import connectDB from "@config/db";
 import { Server as SocketServer } from "socket.io";
-import { env } from "./config/dotenv";
 
 const server = http.createServer(app);
 const io = new SocketServer(server);

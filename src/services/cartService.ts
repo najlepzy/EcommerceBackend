@@ -52,4 +52,16 @@ export class CartService {
   async removeAllProducts(cartId: string): Promise<CartDTO | null> {
     return this.cartRepository.removeAllProducts(cartId);
   }
+
+  async purchaseCart(
+    cartId: string,
+    purchaserEmail: string
+  ): Promise<{
+    success: boolean;
+    message: string;
+    cart?: CartDTO;
+    failedProducts?: string[];
+  }> {
+    return this.cartRepository.purchaseCart(cartId, purchaserEmail);
+  }
 }
