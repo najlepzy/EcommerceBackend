@@ -8,6 +8,7 @@ import passport from "@config/passport";
 import {
   authRoutes,
   cartRoutes,
+  mockRoutes,
   productRoutes,
   viewRoutes,
 } from "@routes/index";
@@ -31,6 +32,7 @@ app.use("/", viewRoutes);
 app.use("/api", authRoutes);
 
 app.use("/api/products", productRoutes);
+app.use("/api/mocks", mockRoutes);
 
 app.use(
   "/api/carts",

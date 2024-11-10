@@ -5,4 +5,5 @@ export interface UserDto {
   age: number;
   password: string;
   role?: string;
+  pets: string[];
 }
