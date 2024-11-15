@@ -1,0 +1,211 @@
+openapi: 3.0.1
+info:
+  title: "API Coder Backend"
+  version: "1.0.0"
+  description: "API Documentation for Coder Backend"
+paths:
+  /api/register:
+    post:
+      tags:
+        - auth
+      operationId: register
+      summary: "Register a new user"
+      description: "Allows registering a user by providing necessary information."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                age:
+                  type: integer
+                password:
+                  type: string
+                role:
+                  type: string
+              required:
+                - firstName
+                - lastName
+                - email
+                - age
+                - password
+                - role
+            example:
+              firstName: "John"
+              lastName: "Doe"
+              email: "johnDoe@example.com"
+              age: 18
+              password: "password1"
+              role: "user"
+      responses:
+        "201":
+          description: "User registered successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "User registered successfully"
+        "400":
+          description: "Bad request, user already registered"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "User already registered"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "An unknown error occurred"
+
+  /api/login:
+    post:
+      tags:
+        - auth
+      operationId: login
+      summary: "User login"
+      description: "Allows the user to log in by providing credentials."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+            example:
+              email: "johnDoe@example.com"
+              password: "password1"
+      responses:
+        "200":
+          description: "Login successful"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+              example:
+                message: "Logged in successfully"
+                token: "jwt.token.example"
+        "401":
+          description: "Invalid credentials"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Invalid email or password"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "An unknown error occurred"
+
+  /api/sessions/current:
+    get:
+      tags:
+        - auth
+      operationId: current
+      summary: "Get the current user's session"
+      description: "Retrieve the authenticated user's data using the JWT token."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: "The JWT token generated after login"
+          schema:
+            type: string
+            example: "Bearer <token>"
+      responses:
+        "200":
+          description: "User data fetched successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  email:
+                    type: string
+                  age:
+                    type: integer
+                  role:
+                    type: string
+              example:
+                firstName: "John"
+                lastName: "Doe"
+                email: "johnDoe@example.com"
+                age: 18
+                role: "user"
+        "401":
+          description: "Unauthorized or invalid token"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Unauthorized or invalid token"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "An unknown error occurred"
+
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

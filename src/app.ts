@@ -14,6 +14,7 @@ import {
 } from "@routes/index";
 import { authorizeRoles, errorHandler } from "@middleware/index";
 import { compressionMiddleware } from "@middleware/compression";
+import { swaggerSpec, swaggerUi } from "@config/swagger";
 
 const app = express();
 app.use(compressionMiddleware);
@@ -30,9 +31,10 @@ app.engine("handlebars", handlebars);
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use("/", viewRoutes);
 app.use("/api", authRoutes);
-
 app.use("/api/products", productRoutes);
 app.use("/api/mocks", mockRoutes);
 
