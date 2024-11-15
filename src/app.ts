@@ -13,8 +13,10 @@ import {
   viewRoutes,
 } from "@routes/index";
 import { authorizeRoles, errorHandler } from "@middleware/index";
+import { compressionMiddleware } from "@middleware/compression";
 
 const app = express();
+app.use(compressionMiddleware);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

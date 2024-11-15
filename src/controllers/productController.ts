@@ -6,7 +6,10 @@ import { io } from "server";
 
 const productService = new ProductService();
 
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { page, limit, sort, query } = req.query;
   const pageNumber = parseInt(page as string) || 1;
   const limitNumber = parseInt(limit as string) || 10;
@@ -44,19 +47,23 @@ export const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const id = req.params.pid;
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(HttpStatusCodes.BAD_REQUEST)
-      .send(messages.invalidIDFormat);
+    res.status(HttpStatusCodes.BAD_REQUEST).send(messages.invalidIDFormat);
+    return;
   }
 
   try {
     const product = await productService.getProductById(id);
-    product
-      ? res.json(product)
-      : res.status(HttpStatusCodes.NOT_FOUND).send(messages.productNotFound);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(HttpStatusCodes.NOT_FOUND).send(messages.productNotFound);
+    }
   } catch (error) {
     console.error(messages.fetchProductsFail, error);
     res
@@ -65,7 +72,10 @@ export const getProductById = async (req: Request, res: Response) => {
   }
 };
 
-export const addProduct = async (req: Request, res: Response) => {
+export const addProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const newProduct = await productService.addProduct(req.body);
     io.emit("productAdded", newProduct);
@@ -78,7 +88,10 @@ export const addProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const id = req.params.pid;
   try {
     const updatedProduct = await productService.updateProduct(id, req.body);
@@ -96,7 +109,10 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const id = req.params.pid;
   try {
     const success = await productService.deleteProduct(id);

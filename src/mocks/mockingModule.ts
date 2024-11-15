@@ -1,15 +1,16 @@
 import bcrypt from "bcrypt";
 import { UserDto } from "@dto/userDto";
 import { PetDto } from "@dto/petDto";
+import { faker } from "@faker-js/faker";
 import { randomInt } from "crypto";
 
 export function generateMockUser(): UserDto {
   const roles = ["user", "admin"];
   const user: UserDto = {
-    firstName: `User${Math.random().toString(36).substring(7)}`,
-    lastName: `Last${Math.random().toString(36).substring(7)}`,
-    email: `user${Math.random().toString(36).substring(7)}@example.com`,
-    age: randomInt(18, 60),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    email: faker.internet.email(),
+    age: faker.number.int({ min: 18, max: 60 }),
     password: bcrypt.hashSync("coder123", 10),
     role: roles[randomInt(0, roles.length)],
     pets: [],
@@ -19,9 +20,9 @@ export function generateMockUser(): UserDto {
 
 export function generateMockPet(): PetDto {
   return {
-    name: `Pet${Math.random().toString(36).substring(7)}`,
-    type: "dog",
-    breed: `Breed${Math.random().toString(36).substring(7)}`,
-    age: randomInt(1, 10),
+    name: faker.person.firstName(),
+    type: faker.helpers.arrayElement(["dog", "cat", "rabbit", "parrot"]),
+    breed: faker.animal.type(),
+    age: faker.number.int({ min: 1, max: 15 }),
   };
 }

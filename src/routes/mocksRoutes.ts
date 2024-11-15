@@ -1,4 +1,3 @@
-// src/routes/mocks.router.ts
 import { Router } from "express";
 import {
   getMockingPets,

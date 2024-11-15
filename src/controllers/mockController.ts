@@ -4,23 +4,41 @@ import Pet from "@models/petModel";
 import { messages, HttpStatusCodes } from "@utils/messages";
 import { generateMockPet, generateMockUser } from "mocks/mockingModule";
 
-export const getMockingPets = (req: Request, res: Response) => {
-  const pets = Array.from({ length: 10 }, generateMockPet);
-  return res.status(HttpStatusCodes.OK).json(pets);
+export const getMockingPets = (req: Request, res: Response): void => {
+  try {
+    const pets = Array.from({ length: 10 }, generateMockPet);
+    res.status(HttpStatusCodes.OK).json(pets);
+  } catch (error) {
+    console.error("Error generating mock pets:", error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
+  }
 };
 
-export const getMockingUsers = (req: Request, res: Response) => {
-  const users = Array.from({ length: 50 }, generateMockUser);
-  return res.status(HttpStatusCodes.OK).json(users);
+export const getMockingUsers = (req: Request, res: Response): void => {
+  try {
+    const users = Array.from({ length: 50 }, generateMockUser);
+    res.status(HttpStatusCodes.OK).json(users);
+  } catch (error) {
+    console.error("Error generating mock users:", error);
+    res
+      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
+  }
 };
 
-export const generateMockData = async (req: Request, res: Response) => {
+export const generateMockData = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { users, pets } = req.body;
 
   if (!users || !pets) {
-    return res
+    res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ message: messages.invalidProductsFormat });
+    return;
   }
 
   try {
@@ -30,14 +48,14 @@ export const generateMockData = async (req: Request, res: Response) => {
     await User.insertMany(mockUsers);
     await Pet.insertMany(mockPets);
 
-    return res.status(HttpStatusCodes.CREATED).json({
+    res.status(HttpStatusCodes.CREATED).json({
       message: messages.success,
       users,
       pets,
     });
   } catch (error) {
-    console.error(messages.internalServerError, error);
-    return res
+    console.error("Error generating mock data:", error);
+    res
       .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: messages.internalServerError });
   }

@@ -5,14 +5,13 @@ export const validateMockData = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const { users, pets } = req.body;
-
   if (typeof users !== "number" || typeof pets !== "number") {
-    return res
+    res
       .status(HttpStatusCodes.BAD_REQUEST)
       .json({ message: messages.invalidProductsFormat });
+    return;
   }
-
   next();
 };

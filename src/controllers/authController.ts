@@ -3,7 +3,10 @@ import User from "@models/userModel";
 import * as userService from "@services/authService";
 import { HttpStatusCodes, messages } from "@utils/messages";
 
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const message = await userService.registerUser(req.body);
     res.status(HttpStatusCodes.CREATED).send(message);
@@ -18,7 +21,7 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   try {
     const user = await userService.loginUser(email, password);
@@ -34,13 +37,17 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getCurrentUser = async (req: Request, res: Response) => {
+export const getCurrentUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const user = req.user as InstanceType<typeof User>;
     if (!user) {
-      return res
+      res
         .status(HttpStatusCodes.UNAUTHORIZED)
         .send(messages.noUserAuthenticated);
+      return;
     }
     const userData = userService.getUserData(user);
     res.json(userData);
