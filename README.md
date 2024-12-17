@@ -34,7 +34,7 @@ pnpm install
 pnpm run dev
 ```
 
-### Swagger
+## Swagger
 
 En el se encuentra documentación de cada uno de los endpoints de la API
 
@@ -42,17 +42,17 @@ En el se encuentra documentación de cada uno de los endpoints de la API
 http://localhost:8080/api-docs
 ```
 
-### Artillery Test
+## Artillery Test
 
 Crea usuarios virtuales (simulaciones) que realizan acciones como si fueran personas reales utilizando la API y cada uno de sus flujos.
 
-## Ejecuta la prueba con el siguiente comando:
+### Ejecuta la prueba con el siguiente comando:
 
 ```bash
 pnpm run load:test
 ```
 
-## Archivo de reporte:
+### Archivo de reporte:
 
 ```bash
 artillery-results.json
