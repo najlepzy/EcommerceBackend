@@ -1,0 +1,100 @@
+config:
+  target: "http://localhost:8080" 
+  phases:
+    - name: "User Registration and Login"
+      duration: 30
+      arrivalRate: 5
+    - name: "Fetch Products"
+      duration: 30
+      arrivalRate: 10
+    - name: "Cart Operations"
+      duration: 30
+      arrivalRate: 15
+    - name: "Purchase Cart"
+      duration: 30
+      arrivalRate: 20
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "User Registration and Login"
+    flow:
+      - post:
+          url: "/api/register"
+          json:
+            email: "user{{ $randomNumber(1000,9999) }}@test.com"
+            password: "Password123!"
+            firstName: "Test"
+            lastName: "User"
+            age: 30
+      - post:
+          url: "/api/login"
+          json:
+            email: "user{{ $randomNumber(1000,9999) }}@test.com"
+            password: "Password123!"
+          capture:
+            - json: "$.token" 
+              as: "authToken"
+
+  - name: "Fetch Products"
+    flow:
+      - get:
+          url: "/api/products"
+      - get:
+          url: "/api/products?page=2&limit=10"
+
+  - name: "Cart Creation and Add Product"
+    flow:
+      - post:
+          url: "/api/carts"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          capture:
+            - json: "$._id" 
+              as: "cartId"
+      - post:
+          url: "/api/carts/{{ cartId }}/product/12345" 
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  - name: "Update Product Quantity in Cart"
+    flow:
+      - put:
+          url: "/api/carts/{{ cartId }}/products/12345"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            quantity: 2
+
+  - name: "Delete Product from Cart"
+    flow:
+      - delete:
+          url: "/api/carts/{{ cartId }}/product/12345"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  - name: "Purchase Cart"
+    flow:
+      - post:
+          url: "/api/carts/{{ cartId }}/purchase"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  - name: "Invalid User Access (401 Test)"
+    flow:
+      - get:
+          url: "/api/products"
+          headers:
+            Authorization: "Bearer invalid_token"
+
+  - name: "Admin Protected Route Test"
+    flow:
+      - post:
+          url: "/api/products"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "New Product"
+            price: 10
+            category: "Test Category"

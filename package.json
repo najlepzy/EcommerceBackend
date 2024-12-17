@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "app.ts",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/server.ts"
+    "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/server.ts",
+    "load:test": "artillery run test-load.yaml --output artillery-results.json"
   },
   "keywords": [],
   "author": "",
@@ -30,25 +31,23 @@
     "socket.io": "^4.7.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
-    "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
-    "@types/express-handlebars": "^6.0.2",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/mongoose-paginate-v2": "^1.6.5",
     "@types/node": "^22.9.0",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
-    "@types/socket.io": "^3.0.2",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.7",
     "@types/uuid": "^10.0.0",
+    "artillery": "^2.0.21",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

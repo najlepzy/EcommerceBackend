@@ -1,0 +1,22 @@
+2024-12-16T23:24:58.333Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:25:56.828Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:26:34.998Z [INFO]: MongoDB Connected: db-shard-00-02.bxpqq.mongodb.net
+2024-12-16T23:26:35.003Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:27:00.578Z [INFO]: MongoDB Connected: db-shard-00-02.bxpqq.mongodb.net
+2024-12-16T23:27:00.582Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:41:35.578Z [INFO]: MongoDB Connected: db-shard-00-00.bxpqq.mongodb.net
+2024-12-16T23:41:35.583Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:42:02.796Z [INFO]: MongoDB Connected: db-shard-00-00.bxpqq.mongodb.net
+2024-12-16T23:42:02.800Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:42:39.601Z [INFO]: MongoDB Connected: db-shard-00-01.bxpqq.mongodb.net
+2024-12-16T23:42:39.604Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:50:05.505Z [INFO]: MongoDB Connected: db-shard-00-01.bxpqq.mongodb.net
+2024-12-16T23:50:05.509Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:50:32.949Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:51:01.395Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:51:09.026Z [INFO]: MongoDB Connected: db-shard-00-01.bxpqq.mongodb.net
+2024-12-16T23:51:09.031Z [INFO]: Server is running on PORT 8080
+2024-12-16T23:54:24.821Z [INFO]: MongoDB Connected: db-shard-00-02.bxpqq.mongodb.net
+2024-12-16T23:54:24.826Z [INFO]: Server is running on PORT 8080
+2024-12-17T00:07:01.037Z [INFO]: MongoDB Connected: db-shard-00-01.bxpqq.mongodb.net
+2024-12-17T00:07:01.043Z [INFO]: Server is running on PORT 8080

@@ -2,7 +2,6 @@ import { CartDAO, ProductDAO } from "@dao/index";
 import { CartDTO } from "@dto/cartDto";
 import { TicketService } from "@services/ticketService";
 import { Helper } from "@utils/cartHelper";
-
 import { messages } from "@utils/messages";
 
 export class CartRepository {
@@ -69,10 +68,12 @@ export class CartRepository {
   }
 
   async purchaseCart(cartId: string, purchaserEmail: string) {
-    const cart = await this.cartDAO.getCartById(cartId);
+    let cart = await this.cartDAO.getCartById(cartId);
     if (!cart) {
       return { success: false, message: messages.cartNotFound };
     }
+
+    cart = await cart.populate("products.product");
 
     const { updatedProducts, failedProducts, totalAmount } =
       await Helper.updateProductStock(cart.products, this.productDAO);
@@ -88,8 +89,8 @@ export class CartRepository {
       await this.ticketService.createTicket(ticketData);
     }
 
-    cart.products = cart.products.filter((item) =>
-      failedProducts.includes(item.product.toString())
+    cart.products = cart.products.filter((item: any) =>
+      failedProducts.includes(item.product._id.toString())
     );
     await cart.save();
 

@@ -22,6 +22,8 @@ const options = {
   apis: [
     path.join(__dirname, "../routes/*.ts"),
     path.join(__dirname, "../docs/users.yaml"),
+    path.join(__dirname, "../docs/products.yaml"),
+    path.join(__dirname, "../docs/carts.yaml"),
   ],
 };
 

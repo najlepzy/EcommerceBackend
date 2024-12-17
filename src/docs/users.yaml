@@ -1,14 +1,17 @@
 openapi: 3.0.1
 info:
-  title: "API Coder Backend"
+  title: "API Coder Backend - Users"
   version: "1.0.0"
-  description: "API Documentation for Coder Backend"
+  description: "API Documentation for User Management and Authentication"
+tags:
+  - name: auth
+    description: "Operations related to user registration, authentication, and session management"
+
 paths:
   /api/register:
     post:
       tags:
         - auth
-      operationId: register
       summary: "Register a new user"
       description: "Allows registering a user by providing necessary information."
       requestBody:
@@ -20,16 +23,24 @@ paths:
               properties:
                 firstName:
                   type: string
+                  description: "User's first name"
                 lastName:
                   type: string
+                  description: "User's last name"
                 email:
                   type: string
+                  format: email
+                  description: "User's unique email address"
                 age:
                   type: integer
+                  description: "User's age"
                 password:
                   type: string
+                  format: password
+                  description: "User's password"
                 role:
                   type: string
+                  description: "User's role (e.g., 'user' or 'admin')"
               required:
                 - firstName
                 - lastName
@@ -54,8 +65,7 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "User registered successfully"
+                    example: "User registered successfully"
         "400":
           description: "Bad request, user already registered"
           content:
@@ -65,8 +75,7 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "User already registered"
+                    example: "User already registered"
         "500":
           description: "Internal server error"
           content:
@@ -76,16 +85,14 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "An unknown error occurred"
+                    example: "An unknown error occurred"
 
   /api/login:
     post:
       tags:
         - auth
-      operationId: login
       summary: "User login"
-      description: "Allows the user to log in by providing credentials."
+      description: "Allows the user to log in by providing valid credentials."
       requestBody:
         required: true
         content:
@@ -95,8 +102,12 @@ paths:
               properties:
                 email:
                   type: string
+                  format: email
+                  description: "User's registered email address"
                 password:
                   type: string
+                  format: password
+                  description: "User's password"
               required:
                 - email
                 - password
@@ -113,11 +124,10 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: "Logged in successfully"
                   token:
                     type: string
-              example:
-                message: "Logged in successfully"
-                token: "jwt.token.example"
+                    example: "jwt.token.example"
         "401":
           description: "Invalid credentials"
           content:
@@ -127,8 +137,7 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "Invalid email or password"
+                    example: "Invalid email or password"
         "500":
           description: "Internal server error"
           content:
@@ -138,24 +147,16 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "An unknown error occurred"
+                    example: "An unknown error occurred"
 
   /api/sessions/current:
     get:
       tags:
         - auth
-      operationId: current
+      security:
+        - jwt: []
       summary: "Get the current user's session"
-      description: "Retrieve the authenticated user's data using the JWT token."
-      parameters:
-        - name: Authorization
-          in: header
-          required: true
-          description: "The JWT token generated after login"
-          schema:
-            type: string
-            example: "Bearer <token>"
+      description: "Retrieve the authenticated user's data using the provided JWT token."
       responses:
         "200":
           description: "User data fetched successfully"
@@ -166,20 +167,20 @@ paths:
                 properties:
                   firstName:
                     type: string
+                    example: "John"
                   lastName:
                     type: string
+                    example: "Doe"
                   email:
                     type: string
+                    format: email
+                    example: "johnDoe@example.com"
                   age:
                     type: integer
+                    example: 18
                   role:
                     type: string
-              example:
-                firstName: "John"
-                lastName: "Doe"
-                email: "johnDoe@example.com"
-                age: 18
-                role: "user"
+                    example: "user"
         "401":
           description: "Unauthorized or invalid token"
           content:
@@ -189,8 +190,7 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "Unauthorized or invalid token"
+                    example: "Unauthorized or invalid token"
         "500":
           description: "Internal server error"
           content:
@@ -200,8 +200,7 @@ paths:
                 properties:
                   message:
                     type: string
-              example:
-                message: "An unknown error occurred"
+                    example: "An unknown error occurred"
 
 components:
   securitySchemes:

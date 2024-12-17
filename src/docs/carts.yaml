@@ -1,0 +1,426 @@
+openapi: 3.0.1
+info:
+  title: "API Coder Backend - Carts"
+  version: "1.0.0"
+  description: "API Documentation for Cart Management"
+tags:
+  - name: carts
+    description: "Operations related to cart management"
+
+paths:
+  /api/carts:
+    post:
+      tags:
+        - carts
+      summary: "Create a new cart"
+      description: "Create an empty cart for the authenticated user. Requires a valid JWT token."
+      security:
+        - jwt: []
+      responses:
+        "201":
+          description: "Cart created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 1
+        "401":
+          description: "Unauthorized (no token or invalid token)"
+        "500":
+          description: "Internal server error"
+
+  /api/carts/{cid}:
+    get:
+      tags:
+        - carts
+      summary: "Get a cart by its ID"
+      description: "Retrieve a cart by its ID. Requires a valid JWT token."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Cart ID"
+      responses:
+        "200":
+          description: "Cart retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 2
+        "400":
+          description: "Invalid ID format"
+        "401":
+          description: "Unauthorized"
+        "404":
+          description: "Cart not found"
+        "500":
+          description: "Internal server error"
+
+    put:
+      tags:
+        - carts
+      summary: "Replace cart products"
+      description: "Replace all products in the cart. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                        example: "60d0fe4f5311236168a109cb"
+                      quantity:
+                        type: integer
+                        example: 3
+              required:
+                - products
+      responses:
+        "200":
+          description: "Cart updated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 3
+        "400":
+          description: "Invalid input format"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart not found"
+        "500":
+          description: "Internal server error"
+
+    delete:
+      tags:
+        - carts
+      summary: "Remove all products from the cart"
+      description: "Delete all products from the cart. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "All products removed from cart"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "All products removed from cart"
+                  cart:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product:
+                              type: string
+                              example: "60d0fe4f5311236168a109cb"
+                            quantity:
+                              type: integer
+                              example: 0
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart not found"
+        "500":
+          description: "Internal server error"
+
+  /api/carts/{cid}/product/{pid}:
+    post:
+      tags:
+        - carts
+      summary: "Add a product to the cart"
+      description: "Add or increase quantity of a product in the cart. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Cart ID"
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Product ID"
+      responses:
+        "200":
+          description: "Product added or quantity increased"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 3
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart not found"
+        "500":
+          description: "Internal server error"
+
+    delete:
+      tags:
+        - carts
+      summary: "Delete a product from the cart"
+      description: "Remove a product from the cart. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Product removed from cart"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 1
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart or product not found"
+        "500":
+          description: "Internal server error"
+
+  /api/carts/{cid}/products/{pid}:
+    put:
+      tags:
+        - carts
+      summary: "Update product quantity in the cart"
+      description: "Update the quantity of a product in the cart. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  example: 5
+      responses:
+        "200":
+          description: "Product quantity updated"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "60d0fe4f5311236168a109ca"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          example: "60d0fe4f5311236168a109cb"
+                        quantity:
+                          type: integer
+                          example: 5
+        "400":
+          description: "Invalid quantity"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart or product not found"
+        "500":
+          description: "Internal server error"
+
+  /api/carts/{cid}/purchase:
+    post:
+      tags:
+        - carts
+      summary: "Purchase the cart"
+      description: "Attempt to purchase all products in the cart. Some may fail if not enough stock. Requires 'user' role."
+      security:
+        - jwt: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Cart ID"
+      responses:
+        "200":
+          description: "Purchase completed or partially completed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Purchase completed"
+                  cart:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "60d0fe4f5311236168a109ca"
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            product:
+                              type: string
+                              example: "60d0fe4f5311236168a109cb"
+                            quantity:
+                              type: integer
+                              example: 2
+                  failedProducts:
+                    type: array
+                    items:
+                      type: string
+                    example: ["60d0fe4f5311236168a109cc"]
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Access denied (requires 'user' role)"
+        "404":
+          description: "Cart not found"
+        "500":
+          description: "Internal server error"
