@@ -4,7 +4,7 @@
   "main": "app.ts",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/server.ts",
-    "load:test": "artillery run test-load.yaml --output artillery-results.json"
+    "load:test": "artillery run test-load.yaml --output artillery-results.json && artillery report artillery-results.json --output report.html"
   },
   "keywords": [],
   "author": "",

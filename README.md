@@ -56,4 +56,5 @@ pnpm run load:test
 
 ```bash
 artillery-results.json
+report.html
 ```
