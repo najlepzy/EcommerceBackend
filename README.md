@@ -58,3 +58,41 @@ pnpm run load:test
 artillery-results.json
 report.html
 ```
+
+## Docker
+
+Crea usuarios virtuales (simulaciones) que realizan acciones como si fueran personas reales utilizando la API y cada uno de sus flujos.
+
+### Imagen
+
+Utiliza el siguiente script para la creación/build de la imagen:
+
+```bash
+docker build -t coder-backend-dev .
+```
+
+Luego con los siguientes scripts corroboramos que el build se haya creado correctamente y tambien visualizamos los contenedores activos.
+
+```bash
+docker images
+docker ps
+```
+
+### Scripts para correr la imagen localmente, en docker hub y para pararla
+
+Localmente:
+
+```bash
+pnpm run docker:dev
+```
+
+```bash
+docker stop CONTAINER-ID
+```
+
+DockerHub:
+
+```bash
+docker run -p 8080:8080 --env-file .env lautanaj/coder-backend:latest
+
+```
