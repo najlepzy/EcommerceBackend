@@ -1,34 +1,34 @@
 # Ecommerce
 
-Este es un proyecto realizado en Node.js con servidor en Express utilizando plantillas de Handlebars para visualizar el contenido del lado del cliente y MongoDB como base de datos.
+This project is built with Node.js using an Express server, Handlebars templates for client-side content rendering, and MongoDB as the database.
 
-## Requisitos
+## Requirements
 
-Antes de comenzar, asegúrate de tener instalado [Node.js](https://nodejs.org/) en su versión v20.15.0 o superior.
+Before starting, ensure you have [Node.js](https://nodejs.org/) installed, version v20.15.0 or higher.
 
-En caso de no tener pnpm instalarlo con el siguiente comando:
+If you don't have pnpm installed, you can install it using the following command:
 
 ```bash
 npm install -g pnpm
 ```
 
-## Instalación
+## Installation
 
-### Clonar el repositorio
+### Clone the Repository
 
-Para obtener el proyecto, utiliza el siguiente comando git para clonar el repositorio:
+To obtain the project, use the following git command to clone the repository:
 
 ```bash
 git clone https://github.com/najlepzy/EcommerceBackend.git
 ```
 
-### Instalar dependencias
+### Install Dependencies
 
 ```bash
 pnpm install
 ```
 
-### Inicializar servidor de Express con nodemon
+### Start the Express Server with Nodemon
 
 ```bash
 pnpm run dev
@@ -36,7 +36,7 @@ pnpm run dev
 
 ## Swagger
 
-En el se encuentra documentación de cada uno de los endpoints de la API
+API documentation for each endpoint is available at:
 
 ```bash
 http://localhost:8080/api-docs
@@ -44,15 +44,17 @@ http://localhost:8080/api-docs
 
 ## Artillery Test
 
-Crea usuarios virtuales (simulaciones) que realizan acciones como si fueran personas reales utilizando la API y cada uno de sus flujos.
+Simulates virtual users performing actions as if they were real users, interacting with the API and its workflows.
 
-### Ejecuta la prueba con el siguiente comando:
+### Run the Test
+
+Use the following command to execute the test:
 
 ```bash
 pnpm run load:test
 ```
 
-### Archivo de reporte:
+### Report Files
 
 ```bash
 artillery-results.json
@@ -61,38 +63,39 @@ report.html
 
 ## Docker
 
-Crea usuarios virtuales (simulaciones) que realizan acciones como si fueran personas reales utilizando la API y cada uno de sus flujos.
+Simulates virtual users performing actions as if they were real users, interacting with the API and its workflows.
 
-### Imagen
+### Image
 
-Utiliza el siguiente script para la creación/build de la imagen:
+Use the following script to build the Docker image:
 
 ```bash
 docker build -t coder-backend-dev .
 ```
 
-Luego con los siguientes scripts corroboramos que el build se haya creado correctamente y tambien visualizamos los contenedores activos.
+Then, use the following scripts to verify that the build was created successfully and to view active containers:
 
 ```bash
 docker images
 docker ps
 ```
 
-### Scripts para correr la imagen localmente, en docker hub y para pararla
+### Scripts to Run the Image Locally, on Docker Hub, and to Stop It
 
-Localmente:
+Locally:
 
 ```bash
 pnpm run docker:dev
 ```
 
+Stop the container:
+
 ```bash
 docker stop CONTAINER-ID
 ```
 
-DockerHub:
+Docker Hub:
 
 ```bash
 docker run -p 8080:8080 --env-file .env lautanaj/coder-backend:latest
-
 ```
