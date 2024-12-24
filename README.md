@@ -99,3 +99,11 @@ Docker Hub:
 ```bash
 docker run -p 8080:8080 --env-file .env lautanaj/coder-backend:latest
 ```
+
+### Run UTest:
+
+Locally:
+
+```bash
+npx jest
+```
