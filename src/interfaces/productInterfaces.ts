@@ -9,6 +9,8 @@ export interface Product extends Document {
   stock: number;
   category: string;
   thumbnails: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PaginateResult<T> {

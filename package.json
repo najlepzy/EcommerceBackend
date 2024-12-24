@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/server.ts",
     "load:test": "artillery run test-load.yaml --output artillery-results.json && artillery report artillery-results.json --output report.html",
-     "docker:dev": "docker run -p 8080:8080 --env-file .env coder-backend",
-     "build": "tsc"
+    "docker:dev": "docker run -p 8080:8080 --env-file .env coder-backend",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -41,6 +41,7 @@
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.2",
     "@types/passport": "^1.0.17",
@@ -50,7 +51,9 @@
     "@types/swagger-ui-express": "^4.1.7",
     "@types/uuid": "^10.0.0",
     "artillery": "^2.0.21",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2"
